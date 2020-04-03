@@ -62,7 +62,6 @@ def home():
 
 def get_cases(soup):
     mains = soup.find_all('div', {'class' : 'maincounter-number'})
-    print(len(mains))
 
     cases = mains[0].text
     death = mains[1].text
@@ -132,4 +131,4 @@ app.jinja_env.filters['datetimeformat'] = format_datetime
 #app.jinja_env.filters['chartfilter'] = chart
 
 if __name__ == '__main__':
-    app.run(host='61.254.114.230', port=5001)
+    app.run(host='0.0.0.0', port=5000)
