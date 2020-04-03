@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+{% block title %}Select a country{% endblock %}
+{% block body %}
+	
+<style>
+table {
+  width: 96%; 
+  border: 1px solid #444444; 
+  border-collapse: collapse; 
+  margin-top:50px;
+}
+td {
+  padding: 8px;
+  border: 1px solid #333333;
+  border-color: #aaa;
+  vertical-align: middle;
+}
+
+th {
+  padding: 8px;
+  border: 1px solid #333333;
+  border-color: #aaa;
+}
+.a {
+  border-collapse: separate;
+}
+.b {
+  border-collapse: collapse;
+}
+.tt {
+	margin-top:30px;
+	text-align: center;
+}
+.bigtext {
+	color:#5e5656; font-size: 40px
+}
+img {
+	vertical-align: middle;
+}
+</style>
+
+<p>
+<div class="tt">
+	<span class="bigtext">Coronavirus Cases: </span>
+	<div class="maincounter-number">
+		<span style="color:#aaa; font-size: 50px"><b>{{main_cases[0]}} </b></span>
+	</div>
+</div>
+</p>
+<p>
+<div class="tt">
+	<span class="bigtext">Deaths: </span>
+	<div class="maincounter-number">
+		<span style="color:#6e265e; font-size: 50px"><b>{{main_cases[1]}} </b></span>
+	</div>
+</div>
+</p>
+<p>
+<div class="tt">
+	<span class="bigtext">Recovered: </span>
+	<div class="maincounter-number">
+		<span style="color:#97c96b; font-size: 50px"><b>{{main_cases[2]}} </b></span>
+	</div>
+</div>
+</p>
+<div role="tabpanel" aria-labelledby="nav-today-tab" align=center> 
+	<table class='b'>
+	
+	<thread>
+	<tr>
+	<th width="30">Country,<br />Other</th>
+	<th width="20">Total<br />Cases</th>
+	<th width="30">New<br />Cases</th>
+	<th width="30">Total<br />Deaths</th>
+	<th width="30">New<br />Deaths</th>
+	<th width="30">Total<br />Recovered</th>
+	<th width="30">Active<br />Cases</th>
+	</tr>
+	</thread>
+
+	{% for country_info in country_infos[1:] %} 
+		<tr>
+		<td style="font-weight: bold; font-size:15px; text-align:left;"><img src="static/images/{{country_info['country']}}.png" >    {{country_info['country']}}</td>
+		<td style="font-weight: bold; text-align:right">{{country_info['totalcases']}}</td>
+		<td style="font-weight: bold; text-align:right;background-color:#FFEEAA;">{{country_info['newcases']}}</td>
+		<td style="font-weight: bold; text-align:right;">{{country_info['totaldeath']}}</td>
+		<td style="font-weight: bold; text-align:right;background-color:red; color:white">{{country_info['newdeath']}}</td>
+		<td style="font-weight: bold; text-align:right">{{country_info['totalrecovered']}}</td>
+		<td style="text-align:right;font-weight:bold;">{{country_info['activecases']}}</td>
+		</tr>
+
+	{% endfor %} 
+	</table>
+</div> 
+{% endblock %}

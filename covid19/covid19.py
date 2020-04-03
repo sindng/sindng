@@ -7,16 +7,18 @@ from hashlib import md5
 from datetime import datetime
 from contextlib import closing
 from flask import Flask, request, session, url_for, redirect, \
-     render_template, abort, g, flash, Markup
+     render_template, abort, g, flash, Markup, Response
 from werkzeug.security import check_password_hash, generate_password_hash
-
+import json
+from functools import wraps
 
 import calendar
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import Table, Column, Float, Integer, String, MetaData, ForeignKey, Date
-from flask import request
+import requests
 from bs4 import BeautifulSoup
+import lxml
 
 
 app = Flask(__name__)
@@ -46,13 +48,58 @@ colors = [
     "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
     "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
 
-@app.route('/parse')
-def parse():
-    req = requests.get('https://www.daum.net/')
+
+@app.route('/') 
+def home(): 
+    response = requests.get('https://www.worldometers.info/coronavirus/') 
+    soup = BeautifulSoup(response.text, "lxml")
     
+    country_infos = get_country_infos(soup)
+    
+    main_cases = get_cases(soup)
+    
+    return render_template('parse.html', country_infos=country_infos, main_cases=main_cases) 
+
+def get_cases(soup):
+    mains = soup.find_all('div', {'class' : 'maincounter-number'})
+    print(len(mains))
+
+    cases = mains[0].text
+    death = mains[1].text
+    recovered = mains[2].text
+
+    main_cases = []
+    main_cases.append(cases);
+    main_cases.append(death);
+    main_cases.append(recovered);
+
+    return main_cases
     
 
-@app.route('/')
+def get_country_infos(soup): 
+    table = soup.find('table')
+    trs = table.find_all('tr')
+
+    country_infos = []
+
+    for tr in trs[1:] :
+        tds = tr.find_all('td')
+        if len(tds) > 0:
+            country_info = {
+                'country' : tds[0].text,
+                'totalcases' : tds[1].text,
+                'newcases' : tds[2].text,
+                'totaldeath' : tds[3].text,
+                'newdeath' : tds[4].text,
+                'totalrecovered' : tds[5].text,
+                'activecases' : tds[6].text
+            }
+        country_infos.append(country_info)
+
+    return country_infos
+    
+
+@app.route('/parse')
 def mainlist():
     f = open('static/countries.txt', 'r')
  #   return "</br>".join()
