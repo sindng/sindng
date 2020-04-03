@@ -1,0 +1,24 @@
+<!doctype html>
+<title>{% block title %}Welcome{% endblock %} | COVID-19 STATUS</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<div class=page>
+    <h1>COVID-19 STATUS</h1>
+    <div class=navigation>
+    	{% block navigation %}{% endblock %}
+    </div>
+    {% with flashes = get_flashed_messages() %}
+        {% if flashes %}
+            <ul class=flashes>
+                {% for message in flashes %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <div class=body>
+        {% block body %}{% endblock %}
+    </div>
+    <div class=footer>
+        COVID-19 STATUS &mdash; A Python Flask Application
+    </div>
+</div>

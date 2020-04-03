@@ -1,0 +1,122 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import with_statement
+import time
+from sqlite3 import dbapi2 as sqlite3
+from hashlib import md5
+from datetime import datetime
+from contextlib import closing
+from flask import Flask, request, session, url_for, redirect, \
+     render_template, abort, g, flash
+from werkzeug.security import check_password_hash, generate_password_hash
+
+
+import calendar
+from flask_appbuilder import Model
+from flask_appbuilder.charts.views import GroupByChartView
+from flask_appbuilder.models.group import aggregate_count, aggregate_sum, aggregate_avg
+from flask_appbuilder.models.sqla.interface import SQLAInterface
+import flask_appbuilder.models.sqla
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy import Table, Column, Float, Integer, String, MetaData, ForeignKey, Date
+
+app = Flask(__name__)
+app.config.from_object(__name__)
+app.config.from_envvar('MINITWIT_SETTINGS', silent=True)
+app.config['SECRET_KEY'] = 'this is secret'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+class Country(Model):
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique = True, nullable=False)
+
+    def __repr__(self):
+        return self.name
+
+
+class CountryStats(Model):
+    id = Column(Integer, primary_key=True)
+    #stat_date = Column(Date, nullable=True)
+    population = Column(Float)
+    unemployed_perc = Column(Float)
+    poor_perc = Column(Float)
+    college = Column(Float)
+    country_id = Column(Integer, ForeignKey('country.id'), nullable=False)
+    country = relationship("Country",  backref='conref', lazy=True)
+
+    def college_perc(self):
+        if self.population != 0:
+            return (self.college*100)/self.population
+        else:
+            return 0.0
+
+    def month_year(self):
+        return datetime.datetime(self.stat_date.year, self.stat_date.month, 1)
+
+
+def pretty_month_year(value):
+    return calendar.month_name[value.month] + ' ' + str(value.year)
+
+
+class CountryGroupByChartView(GroupByChartView):
+    datamodel = SQLAInterface(CountryStats)
+    chart_title = 'Statistics'
+
+    definitions = [
+        {
+            'group': 'month_year',
+            'formatter': pretty_month_year,
+            'series': [(aggregate_avg, 'unemployed_perc'),
+                       (aggregate_avg, 'college_perc')
+            ]
+        }
+    ]
+
+@app.route('/')
+def mainlist():
+    f = open('static/countries.txt', 'r')
+ #   return "</br>".join()
+    return render_template('main2.html', country_names=f.readlines(), curtime=int(time.time()))
+
+@app.route('/country/<country_name>')
+def country_status(country_name=None):
+    if not country_name:
+        return redirect(url_for('mainlist'))
+    return render_template('detail.html', country_name=country_name)
+
+def format_datetime(timestamp):
+    """Format a timestamp for display."""
+    return datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d @')
+    #return datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d @ %H:%M')
+
+def gravatar_url(email, size=40):
+    """Return the gravatar image for the given email address."""
+    return 'http://www.gravatar.com/avatar/%s?d=identicon&s=%d' % \
+        (md5(email.strip().lower().encode('utf-8')).hexdigest(), 
+         size)
+        
+def inputdata():
+    con1 = Country(name='Korea')
+    db.session.add(con1)
+    db.session.commit()
+    
+    CountryStats = Post(population=1.5, unemployed=2.0, poor_perc=3.0, college=0.7, conref=con1)
+    db.session.add(CountryStats)
+    db.session.commit()
+    
+def chart():
+    db.create_all()
+    inputdata()
+    return appbuilder.add_view(CountryGroupByChartView, "Show Country Chart", icon="fa-dashboard", category="Statistics")
+
+    
+# add some filters to jinja
+app.jinja_env.filters['gravatar'] = gravatar_url
+app.jinja_env.filters['datetimeformat'] = format_datetime
+app.jinja_env.filters['chartfilter'] = chart
+
+if __name__ == '__main__':
+    app.run(host='61.254.114.230', port=5000)

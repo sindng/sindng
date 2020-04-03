@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block title %}Select a country{% endblock %}
+{% block body %}
+<h2>Select a country</h2>
+	<ul class=messages>
+		{% for country in country_names %}
+		<li align=left>
+		    <img src="static/images/{{country}}.png">
+			<p>
+		        <strong><a href="{{ url_for('country_status', country_name=country)}}">{{country}}</a></strong>
+		        <small>&mdash; {{ curtime|datetimeformat }}</small>
+		</li>
+		{% endfor %}
+	</ul>
+{% endblock %}
