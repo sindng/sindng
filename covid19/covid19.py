@@ -81,7 +81,7 @@ def get_country_infos(soup):
 
     country_infos = []
 
-    for tr in trs :
+    for tr in trs[1:] :
         tds = tr.find_all('td')
         if len(tds) > 0:
             country_info = {
@@ -131,4 +131,4 @@ app.jinja_env.filters['datetimeformat'] = format_datetime
 #app.jinja_env.filters['chartfilter'] = chart
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='61.254.114.230', port=5001)
