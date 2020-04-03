@@ -62,7 +62,6 @@ def home():
 
 def get_cases(soup):
     mains = soup.find_all('div', {'class' : 'maincounter-number'})
-    print(len(mains))
 
     cases = mains[0].text
     death = mains[1].text
@@ -82,7 +81,7 @@ def get_country_infos(soup):
 
     country_infos = []
 
-    for tr in trs[1:] :
+    for tr in trs :
         tds = tr.find_all('td')
         if len(tds) > 0:
             country_info = {

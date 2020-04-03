@@ -78,7 +78,7 @@ img {
 	</tr>
 	</thread>
 
-	{% for country_info in country_infos[1:] %} 
+	{% for country_info in country_infos %} 
 		<tr>
 		<td style="font-weight: bold; font-size:15px; text-align:left;"><img src="static/images/{{country_info['country']}}.png" >    {{country_info['country']}}</td>
 		<td style="font-weight: bold; text-align:right">{{country_info['totalcases']}}</td>
