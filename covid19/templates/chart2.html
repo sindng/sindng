@@ -1,46 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Coronavirus Status{% endblock %}
 {% block body %}
-
-<style>
-table {
-  width: 96%; 
-  border: 1px solid #444444; 
-  border-collapse: collapse; 
-  margin-top:66px;
-  margin-bottom: 33px;
-}
-td {
-  padding: 8px;
-  border: 1px solid #333333;
-  border-color: #aaa;
-  vertical-align: middle;
-}
-
-th {
-  padding: 8px;
-  border: 1px solid #333333;
-  border-color: #aaa;
-  background: #eee;
-}
-.tableseparate {
-  border-collapse: separate;
-}
-.tablecollapse {
-  border-collapse: collapse;
-}
-.tt {
-	margin-top:40x;
-	text-align: center;
-}
-.bigtext {
-	color:#5e5656; font-size: 40px
-}
-img {
-	vertical-align: middle;
-}
-</style>
-
 <h2>{{ country_name }}</h2>
 	<!DOCTYPE html>
 	<html lang="en">
@@ -48,7 +7,7 @@ img {
 	  <meta charset="utf-8" />
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 	</head>
-
+	
 	<body>
 	  <center>
 		<div>
@@ -57,12 +16,20 @@ img {
 		</div>
 		<script>
 		
+		labelsd = [
+		    'JAN', 'FEB', 'MAR', 'APR',
+		    'MAY', 'JUN', 'JUL', 'AUG',
+		    'SEP', 'OCT', 'NOV', 'DEC'
+		]
+
+		valuesd = [
+		    967.67, 1190.89, 1079.75, 1349.19,
+		    2328.91, 2504.28, 2873.83, 4764.87,
+		    4349.29, 6458.30, 9907, 16297
+		]
+		
 		 var barData = {
-				labels : [
-		            {% for item in labels2 %}
-		               "{{ item }}",
-		              {% endfor %}
-			],
+		        labels : labelsd,		
 		        datasets : [{
 		          label: "확진자 수",
 				    fill: true,
@@ -82,9 +49,10 @@ img {
 					pointHoverBorderWidth: 2,
 					pointRadius: 1,
 					pointHitRadius: 10,
-			        data : {{values2}}
-		      }]
-		 }
+		          data : valuesd
+		          }
+		        ]
+		      }
 		 
 		var ctx = document.getElementById('myChart').getContext('2d');
 		var data = {

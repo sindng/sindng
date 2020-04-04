@@ -1,71 +1,110 @@
 {% extends "layout.html" %}
-{% block title %}Select a country{% endblock %}
+{% block title %}Coronavirus Status{% endblock %}
 {% block body %}
-	
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>title</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+</head>
+
 <style>
 table {
-  width: 96%; 
-  border: 1px solid #444444; 
-  border-collapse: collapse; 
-  margin-top:50px;
+	width: 96%; 
+	border: 1px solid #444444; 
+	border-collapse: collapse; 
+	margin-bottom: 33px;
+	margin-top: 10px;
 }
 td {
-  padding: 8px;
-  border: 1px solid #333333;
-  border-color: #aaa;
-  vertical-align: middle;
+	padding: 8px;
+	border: 1px solid #333333;
+	border-color: #aaa;
+	vertical-align: middle;
 }
 
 th {
-  padding: 8px;
-  border: 1px solid #333333;
-  border-color: #aaa;
+	padding: 8px;
+	border: 1px solid #333333;
+	border-color: #aaa;
+	background: #eee;
 }
-.a {
-  border-collapse: separate;
+.tablenoborder {
+	border: 0px;
+	margin-top: 40px;
 }
-.b {
-  border-collapse: collapse;
+.tablecollapse {
+	border-collapse: collapse;
+}
+.graphtr {
+	border: 0px;
+}
+.graphtd {
+	border: 0px;
 }
 .tt {
-	margin-top:30px;
+	margin-top:40x;
 	text-align: center;
 }
 .bigtext {
 	color:#5e5656; font-size: 40px
+}
+.graph {
+	margin-top:66px;
+	width: 70%;
 }
 img {
 	vertical-align: middle;
 }
 </style>
 
-<p>
-<div class="tt">
-	<span class="bigtext">Coronavirus Cases: </span>
-	<div class="maincounter-number">
-		<span style="color:#aaa; font-size: 50px"><b>{{main_cases[0]}} </b></span>
+
+<body>
+
+
+<div id="main_cases">
+	<div class="tt" style="margin-top: 44px;">
+		<span class="bigtext"">Coronavirus Cases: </span>
+		<div class="maincounter-number">
+			<span style="color:#aaa; font-size: 50px"><b>{{main_cases[0]}} </b></span>
+		</div>
+	</div>
+	</p>
+	<p>
+	<div class="tt">
+		<span class="bigtext">Deaths: </span>
+		<div class="maincounter-number">
+			<span style="color:#6e265e; font-size: 50px"><b>{{main_cases[1]}} </b></span>
+		</div>
+	</div>
+	</p>
+	<p>
+	<div class="tt">
+		<span class="bigtext">Recovered: </span>
+		<div class="maincounter-number">
+			<span style="color:#97c96b; font-size: 50px"><b>{{main_cases[2]}} </b></span>
+		</div>
 	</div>
 </div>
-</p>
-<p>
-<div class="tt">
-	<span class="bigtext">Deaths: </span>
-	<div class="maincounter-number">
-		<span style="color:#6e265e; font-size: 50px"><b>{{main_cases[1]}} </b></span>
-	</div>
+
+<div id=graphstable>
+<table class="tablenoborder">
+<tr class='graphtr'>
+<td class='graphtd'>
+    <canvas id="caseschart"></canvas>
+</td>
+<td class='graphtd'>
+    <canvas id="deathschart"></canvas>
+</td>
+</tr>
+</table>
 </div>
-</p>
-<p>
-<div class="tt">
-	<span class="bigtext">Recovered: </span>
-	<div class="maincounter-number">
-		<span style="color:#97c96b; font-size: 50px"><b>{{main_cases[2]}} </b></span>
-	</div>
-</div>
-</p>
-<div role="tabpanel" aria-labelledby="nav-today-tab" align=center> 
-	<table class='b'>
-	
+
+<div id="table" role="tabpanel" aria-labelledby="nav-today-tab" align=center> 
+	<table class='tablecollapse'>
 	<thread>
 	<tr>
 	<th width="30">Country,<br />Other</th>
@@ -80,7 +119,7 @@ img {
 
 	{% for country_info in country_infos %} 
 		<tr>
-		<td style="font-weight: bold; font-size:15px; text-align:left;"><img src="static/images/{{country_info['country']}}.png" >    {{country_info['country']}}</td>
+		<td style="font-weight: bold; font-size:15px; text-align:left;"><img onerror="this.style.display='none'" src="static/images/{{country_info['country']}}.png" >&nbsp; {{country_info['country']}}</td>
 		<td style="font-weight: bold; text-align:right">{{country_info['totalcases']}}</td>
 		<td style="font-weight: bold; text-align:right;background-color:#FFEEAA;">{{country_info['newcases']}}</td>
 		<td style="font-weight: bold; text-align:right;">{{country_info['totaldeath']}}</td>
@@ -88,8 +127,114 @@ img {
 		<td style="font-weight: bold; text-align:right">{{country_info['totalrecovered']}}</td>
 		<td style="text-align:right;font-weight:bold;">{{country_info['activecases']}}</td>
 		</tr>
-
 	{% endfor %} 
 	</table>
 </div> 
+
+
+<script>
+var casesData = {
+		labels : [
+            {% for item in xcases %}
+               "{{ item }}",
+            {% endfor %}
+	    ],
+        datasets : [{
+            label: "Cases",
+		    fill: true,
+			lineTension: 0.1,
+			backgroundColor: "rgba(75,192,192,0.4)",
+			borderColor: "rgba(75,192,192,1)",
+			borderCapStyle: 'butt',
+			borderDash: [],
+			borderDashOffset: 0.0,
+			borderJoinStyle: 'miter',
+			pointBorderColor: "rgba(75,192,192,1)",
+			pointBackgroundColor: "#fff",
+			pointBorderWidth: 1,
+			pointHoverRadius: 3,
+			pointHoverBackgroundColor: "rgba(75,192,192,1)",
+			pointHoverBorderColor: "rgba(220,220,220,1)",
+			pointHoverBorderWidth: 2,
+			pointRadius: 1,
+			pointHitRadius: 10,
+			data : {{ycases}}
+        }]
+    }
+ 
+var ctx = document.getElementById('caseschart').getContext('2d');
+var casesdata = {
+    type: 'line',
+	data: casesData,
+    options: {
+    	scales: {
+    		xAxes: [{
+    			afterTickToLabelConversion: function(data){
+                    var xLabels = data.ticks;
+                    xLabels.forEach(function (labels, i) {
+                        if (i % 2 == 1){
+                            xLabels[i] = '';
+                        }
+                    });
+                } 
+    		}]
+    	}
+    }
+}
+var caseschart = new Chart(ctx, casesdata);
+
+
+var deathsData = {
+		labels : [
+            {% for item in xdeaths %}
+               "{{ item }}",
+            {% endfor %}
+	    ],
+        datasets : [{
+            label: "Deaths",
+		    fill: true,
+			lineTension: 0.1,
+			backgroundColor: "rgba(217,132,132,0.4)",
+			borderColor: "rgba(199,95,95,1)",
+			borderCapStyle: 'butt',
+			borderDash: [],
+			borderDashOffset: 0.0,
+			borderJoinStyle: 'miter',
+			pointBorderColor: "rgba(75,192,192,1)",
+			pointBackgroundColor: "#fff",
+			pointBorderWidth: 1,
+			pointHoverRadius: 3,
+			pointHoverBackgroundColor: "rgba(75,192,192,1)",
+			pointHoverBorderColor: "rgba(220,220,220,1)",
+			pointHoverBorderWidth: 2,
+			pointRadius: 1,
+			pointHitRadius: 10,
+			data : {{ydeaths}}
+        }]
+    }
+ 
+var ctx = document.getElementById('deathschart').getContext('2d');
+var deathsdata = {
+    type: 'line',
+	data: deathsData,
+    options: {
+    	scales: {
+    		xAxes: [{
+    			afterTickToLabelConversion: function(data){
+                    var xLabels = data.ticks;
+                    xLabels.forEach(function (labels, i) {
+                        if (i % 2 == 1){
+                            xLabels[i] = '';
+                        }
+                    });
+                } 
+    		}]
+    	}
+    }
+}
+var caseschart = new Chart(ctx, deathsdata);
+</script>
+</body>
+</html>
+
 {% endblock %}

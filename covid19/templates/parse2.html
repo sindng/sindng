@@ -1,0 +1,161 @@
+{% extends "layout.html" %}
+{% block title %}Coronavirus Status{% endblock %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>title</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+</head>
+
+<style>
+table {
+  width: 96%; 
+  border: 1px solid #444444; 
+  border-collapse: collapse; 
+  margin-top:66px;
+  margin-bottom: 33px;
+}
+td {
+  padding: 8px;
+  border: 1px solid #333333;
+  border-color: #aaa;
+  vertical-align: middle;
+}
+
+th {
+  padding: 8px;
+  border: 1px solid #333333;
+  border-color: #aaa;
+  background: #eee;
+}
+.tableseparate {
+  border-collapse: separate;
+}
+.tablecollapse {
+  border-collapse: collapse;
+}
+.tt {
+	margin-top:40x;
+	text-align: center;
+}
+.bigtext {
+	color:#5e5656; font-size: 40px
+}
+img {
+	vertical-align: middle;
+}
+</style>
+
+
+<body>
+
+
+<div id="main_cases">
+	<div class="tt" style="margin-top: 44px;">
+		<span class="bigtext"">Coronavirus Cases: </span>
+		<div class="maincounter-number">
+			<span style="color:#aaa; font-size: 50px"><b>{{main_cases[0]}} </b></span>
+		</div>
+	</div>
+	</p>
+	<p>
+	<div class="tt">
+		<span class="bigtext">Deaths: </span>
+		<div class="maincounter-number">
+			<span style="color:#6e265e; font-size: 50px"><b>{{main_cases[1]}} </b></span>
+		</div>
+	</div>
+	</p>
+	<p>
+	<div class="tt">
+		<span class="bigtext">Recovered: </span>
+		<div class="maincounter-number">
+			<span style="color:#97c96b; font-size: 50px"><b>{{main_cases[2]}} </b></span>
+		</div>
+	</div>
+</div>
+
+
+<center>
+<div>
+    <canvas id="chart" width="600" height="400"></canvas>
+</div>
+
+<script>
+	 xcases = graph_values[0][0]
+	 ycases = graph_values[1][0]
+
+	 var barData = {
+		        labels : ["a", "b"],
+		        datasets : [{
+		          label: "확진자 수",
+				    fill: true,
+					lineTension: 0.1,
+					backgroundColor: "rgba(75,192,192,0.4)",
+					borderColor: "rgba(75,192,192,1)",
+					borderCapStyle: 'butt',
+					borderDash: [],
+					borderDashOffset: 0.0,
+					borderJoinStyle: 'miter',
+					pointBorderColor: "rgba(75,192,192,1)",
+					pointBackgroundColor: "#fff",
+					pointBorderWidth: 1,
+					pointHoverRadius: 5,
+					pointHoverBackgroundColor: "rgba(75,192,192,1)",
+					pointHoverBorderColor: "rgba(220,220,220,1)",
+					pointHoverBorderWidth: 2,
+					pointRadius: 1,
+					pointHitRadius: 10,
+		          data : [10, 20]
+		          }
+		        ]
+		      }
+		 
+		var ctx = document.getElementById('chart').getContext('2d');
+		var data = {
+		    type: 'line',
+			data:barData,
+		    options: {}
+		}
+		var chart = new Chart(ctx, data);
+</script>
+</center>
+
+
+<div id="table" role="tabpanel" aria-labelledby="nav-today-tab" align=center> 
+	<table class='tablecollapse'>
+	<thread>
+	<tr>
+	<th width="30">Country,<br />Other</th>
+	<th width="20">Total<br />Cases</th>
+	<th width="30">New<br />Cases</th>
+	<th width="30">Total<br />Deaths</th>
+	<th width="30">New<br />Deaths</th>
+	<th width="30">Total<br />Recovered</th>
+	<th width="30">Active<br />Cases</th>
+	</tr>
+	</thread>
+
+	{% for country_info in country_infos %} 
+		<tr>
+		<td style="font-weight: bold; font-size:15px; text-align:left;"><img onerror="this.style.display='none'" src="static/images/{{country_info['country']}}.png" >&nbsp; {{country_info['country']}}</td>
+		<td style="font-weight: bold; text-align:right">{{country_info['totalcases']}}</td>
+		<td style="font-weight: bold; text-align:right;background-color:#FFEEAA;">{{country_info['newcases']}}</td>
+		<td style="font-weight: bold; text-align:right;">{{country_info['totaldeath']}}</td>
+		<td style="font-weight: bold; text-align:right;background-color:red; color:white">{{country_info['newdeath']}}</td>
+		<td style="font-weight: bold; text-align:right">{{country_info['totalrecovered']}}</td>
+		<td style="text-align:right;font-weight:bold;">{{country_info['activecases']}}</td>
+		</tr>
+	{% endfor %} 
+	</table>
+</div> 
+
+
+</body>
+</html>
+
+{% endblock %}

@@ -40,7 +40,7 @@ labels = [
 ]
 
 values = [
-    1000.67, 1190.89, 1079.75, 1349.19,
+    967.67, 1190.89, 1079.75, 1349.19,
     2328.91, 2504.28, 2873.83, 4764.87,
     4349.29, 6458.30, 9907, 16297
 ]
@@ -62,7 +62,7 @@ def home():
    
     country_infos = get_country_infos(soup)
     
-    return render_template('parse.html', country_infos=country_infos, main_cases=main_cases, xcases=graph_values[0][0], ycases=graph_values[1][0], xdeaths=graph_values[0][1], ydeaths=graph_values[1][1]) 
+    return render_template('parse.html', country_infos=country_infos, main_cases=main_cases, graph_values=graph_values) 
 
 
 def get_graph_values(soup):
@@ -123,18 +123,6 @@ def get_graph_values(soup):
     graph_values = []
     graph_values.append(xvalues)
     graph_values.append(yvalues)
-    #==================================================================================================   
-    #values test
-    
-    xcases = graph_values[0][0]
-    ycases = graph_values[1][0]
-    xdeaths = graph_values[0][1]
-    ydeaths = graph_values[1][1]
-    print(xcases)
-    print(ycases)
-    print(xdeaths)
-    print(ydeaths)
-    
     
     return graph_values
 
@@ -190,7 +178,7 @@ def country_status(country_name=None):
     
     line_labels = labels
     line_values = values
-    return render_template('chart.html', title='Covid-19 '+country_name, country_name=country_name, max=20000, labels2=line_labels, values2=line_values)
+    return render_template('chart.html', title='Covid-19 '+country_name, country_name=country_name, max=20000, labels=line_labels, values=line_values)
 
 def format_datetime(timestamp):
     """Format a timestamp for display."""
