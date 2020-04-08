@@ -32,24 +32,103 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
+@app.route('/jam')
+def jam():
+    response = requests.get('http://www.slrclub.com/bbs/zboard.php?id=hot_article&category=1&setsearch=category') 
+    soup = BeautifulSoup(response.text, "lxml")
+    
+    prev_next = get_prevNext(soup) 
+    slrlist = get_slrlist(soup)
+    
+    return render_template('jam.html', slrlist=slrlist, prev_next=prev_next) 
 
-labels = [
-    'JAN', 'FEB', 'MAR', 'APR',
-    'MAY', 'JUN', 'JUL', 'AUG',
-    'SEP', 'OCT', 'NOV', 'DEC'
-]
 
-values = [
-    1000.67, 1190.89, 1079.75, 1349.19,
-    2328.91, 2504.28, 2873.83, 4764.87,
-    4349.29, 6458.30, 9907, 16297
-]
+@app.route('/jam/<link>')
+def jam_newpage(link=None):
+    
+    if not link:
+         return redirect(url_for('jam'))
+     
+    print("link prev : {0}".format(link))
+    link = link.replace('%3F', '?').replace('%3D', '=').replace('%26', '&')
+   
+    link = 'http://www.slrclub.com/bbs/' + link
+    print("link after : {0}".format(link))
+     
+    response = requests.get(link) 
+    soup = BeautifulSoup(response.text, "lxml")
+    
+    prev_next = get_prevNext(soup) 
+    slrlist = get_slrlist(soup)
+    
+    return render_template('jam.html', slrlist=slrlist, prev_next=prev_next)
 
-colors = [
-    "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA",
-    "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
-    "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
+def get_prevNext(soup):
+    table = soup.find_all('table', {'id' : 'bbs_foot'})
+    btns = table[0].find_all('td', {'class' : 'btn1'})
+    
+    preva = btns[0].find_all('a', {'class' : 'prev1 bh bt_fpg'})
+    nexta = btns[0].find_all('a', {'class' : 'next1 bh bt_npg'})
+    patternurl = re.compile(r"href=\"(.*?)\" title=", re.MULTILINE | re.DOTALL | re.UNICODE)
 
+    print(table[0])
+    print("btns : {0}".format(btns))
+    print("prev url : {0}".format(preva))
+    print("next url : {0}".format(nexta))
+
+    urls = []
+    
+    if preva:
+        prev_url = patternurl.findall(str(preva))
+        link = str(prev_url).replace('[\'','').replace('\']','').replace('amp;','').replace('/bbs','')
+        url = {
+            'title' : '<--- prev',
+            'link' : link
+        }
+        urls.append(url)
+        print("prev url : {0}".format(link))
+    
+    if nexta:   
+        next_url = patternurl.findall(str(nexta))
+        link = str(next_url).replace('[\'','').replace('\']','').replace('amp;','').replace('/bbs','')
+        url = {
+            'title' : 'next --->',
+            'link' : link
+        }
+        urls.append(url)
+        print("next url : {0}".format(link))
+
+    print("urls : {0}".format(urls))
+    return urls
+
+def get_slrlist(soup):
+    table = soup.find_all('table', {'id' : 'bbs_list'})
+    trs = table[0].find_all('tr')  
+
+    patternurl = re.compile(r"a href=\"(.*?)\"", re.MULTILINE | re.DOTALL | re.UNICODE)
+    infos = []
+    
+    for tr in trs[1:] :
+
+        tds = tr.find_all('td')
+        td_infos = []
+        
+        i = 0 
+        for td in tds :
+            td_infos.append(td.text)
+            if i == 2:
+                atag = td.find('a')
+                url = patternurl.findall(str(atag))
+                link = str(url).replace('[\'','').replace('\']','').replace('amp;','')
+                td_infos.append(link)
+            
+            i = i + 1
+            
+        infos.append(td_infos)
+
+    #print(infos)
+    
+    return infos
 
 @app.route('/') 
 def home(): 

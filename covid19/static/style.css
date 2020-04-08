@@ -1,7 +1,7 @@
 body {
-    background: #CAECE9;
+    background: #ffffff;
     font-family: 'Trebuchet MS', sans-serif;
-    font-size: 14px;
+    font-size: 10px;
 }
 
 a {
@@ -12,29 +12,6 @@ a:hover {
     color: #333;
 }
 
-input[type="text"],
-input[type="password"] {
-    background: white;
-    border: 1px solid #BFE6E2;
-    padding: 2px;
-    font-family: 'Trebuchet MS', sans-serif;
-    font-size: 14px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    color: #105751;
-}
-
-input[type="submit"] {
-    background: #105751;
-    border: 1px solid #073B36;
-    padding: 1px 3px;
-    font-family: 'Trebuchet MS', sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    color: white;
-}
 
 div.page {
     background: white;
@@ -44,7 +21,7 @@ div.page {
 }
 
 div.page h1 {
-    background: #6ECCC4;
+    background: #ffffff;
     margin: 0;
     padding: 10px 14px;
     color: white;
@@ -54,12 +31,12 @@ div.page h1 {
 }
 
 div.page div.navigation {
-    background: #DEE9E8;
+    background: #ffffff;
     padding: 4px 10px;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #eee;
     color: #888;
-    font-size: 12px;
+    font-size: 10px;
     letter-spacing: 0.5px;
 }
 
@@ -74,15 +51,18 @@ div.page h2 {
     text-shadow: 0 1px 2px #ccc;
 }
 
+
+
 div.page div.body {
     padding: 10px;
+    font-size : 10px;
 }
 
 div.page div.footer {
     background: #eee;
     color: #888;
     padding: 5px 10px;
-    font-size: 12px;
+    font-size: 10px;
 }
 
 div.page div.followstatus {
@@ -102,12 +82,12 @@ div.page ul.messages {
 
 div.page ul.messages li {
     margin: 10px 0;
-    padding: 5px;
-    background: #F0FAF9;
+    padding: 3px;
+    background: #111111;
     border: 1px solid #DBF3F1;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    min-height: 48px;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    min-height: 10px;
 }
 
 div.page ul.messages p {
@@ -127,7 +107,7 @@ div.page ul.messages li small {
 div.page div.twitbox {
     margin: 10px 0;
     padding: 5px;
-    background: #F0FAF9;
+    background: #111111;
     border: 1px solid #94E2DA;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
@@ -159,12 +139,12 @@ ul.flashes {
 }
 
 ul.flashes li {
-    background: #B9F3ED;
+    background: #111111;
     border: 1px solid #81CEC6;
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
     padding: 4px;
-    font-size: 13px;
+    font-size: 10px;
 }
 
 div.error {
@@ -177,3 +157,6 @@ div.error {
     font-size: 13px;
 }
 
+.tdempy {
+	margin-right:5px
+}

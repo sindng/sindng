@@ -1,0 +1,22 @@
+{% extends "layout_jam.html" %}
+{% block title %}slr club{% endblock %}
+{% block body %}
+	<ul class=messages>
+		{% for item in slrlist %}
+		<li align=left>
+		       <a href=http://www.slrclub.com{{item[3]}} style="text-decoration:none"><h3>{{item[2]}}</h3></a>
+		</li>
+		{% endfor %}
+		<li align=left>
+			<p>
+				<table>
+				<tr>
+				{% for btn in prev_next %}
+		       	<td class=tdempy><a href="{{ url_for('jam_newpage',link=btn['link'])}}" style="text-decoration:none"><h1>{{btn['title']}}</h1></a></td>
+		       	{% endfor %}
+		       	</tr>
+		       	</table>
+		    </p>
+		</li>
+	</ul>
+{% endblock %}
