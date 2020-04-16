@@ -49,11 +49,11 @@ def jam_newpage(link=None):
     if not link:
          return redirect(url_for('jam'))
      
-    print("link prev : {0}".format(link))
+    #print("link prev : {0}".format(link))
     link = link.replace('%3F', '?').replace('%3D', '=').replace('%26', '&')
    
     link = 'http://www.slrclub.com/bbs/' + link
-    print("link after : {0}".format(link))
+    #print("link after : {0}".format(link))
      
     response = requests.get(link) 
     soup = BeautifulSoup(response.text, "lxml")
@@ -71,10 +71,10 @@ def get_prevNext(soup):
     nexta = btns[0].find_all('a', {'class' : 'next1 bh bt_npg'})
     patternurl = re.compile(r"href=\"(.*?)\" title=", re.MULTILINE | re.DOTALL | re.UNICODE)
 
-    print(table[0])
-    print("btns : {0}".format(btns))
-    print("prev url : {0}".format(preva))
-    print("next url : {0}".format(nexta))
+    #print(table[0])
+    #print("btns : {0}".format(btns))
+    #print("prev url : {0}".format(preva))
+    #print("next url : {0}".format(nexta))
 
     urls = []
     
@@ -86,7 +86,7 @@ def get_prevNext(soup):
             'link' : link
         }
         urls.append(url)
-        print("prev url : {0}".format(link))
+        #print("prev url : {0}".format(link))
     
     if nexta:   
         next_url = patternurl.findall(str(nexta))
@@ -96,9 +96,9 @@ def get_prevNext(soup):
             'link' : link
         }
         urls.append(url)
-        print("next url : {0}".format(link))
+        #print("next url : {0}".format(link))
 
-    print("urls : {0}".format(urls))
+    #print("urls : {0}".format(urls))
     return urls
 
 def get_slrlist(soup):
@@ -209,10 +209,10 @@ def get_graph_values(soup):
     ycases = graph_values[1][0]
     xdeaths = graph_values[0][1]
     ydeaths = graph_values[1][1]
-    print(xcases)
-    print(ycases)
-    print(xdeaths)
-    print(ydeaths)
+    #print(xcases)
+    #print(ycases)
+    #print(xdeaths)
+    #print(ydeaths)
     
     
     return graph_values
@@ -289,4 +289,4 @@ app.jinja_env.filters['datetimeformat'] = format_datetime
 #app.jinja_env.filters['chartfilter'] = chart
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='61.254.114.230', port=5000)
